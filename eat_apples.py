@@ -1,4 +1,5 @@
 from selenium import webdriver
+import numpy
 import time
 
 driver = webdriver.Chrome()
@@ -10,17 +11,14 @@ ready.click()
 while True:
     try:
         score_button = driver.find_elements_by_xpath("//div[(contains(@class, 't1') or contains(@class, 't2') or contains(@class, 't3') or contains(@class, 't4') or contains(@class, 't5')) and not(contains(@class, 'tt'))]")
-        for i in range(len(score_button)):
-            i = 0
-            max_index = 0
-            max_location = 0
-            for x in score_button:
-                if x.location['y'] > max_location:
-                    max_location = x.location['y']
-                    max_index = i
-                i+=1
-            score_button[max_index].click()
-            score_button.pop(max_index)
+        locations = [i.location['y'] for i in score_button]
+        location_index = numpy.argsort(locations)[::-1]
+
+        for i in location_index:
+            if (score_button[i].is_enabled() and score_button[i].is_displayed()):
+                score_button[i].click()
+            else:
+                continue
             #webdriver.ActionChains(driver).move_to_element(score_button[max_index]).click().perform()
     except Exception as e:
         print (e)
