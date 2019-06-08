@@ -38,18 +38,22 @@ func main() {
 	for {
 		score_button, _ := wd.FindElements(selenium.ByXPATH, "//div[(contains(@class, 't1') or contains(@class, 't2') or contains(@class, 't3') or contains(@class, 't4') or contains(@class, 't5')) and not(contains(@class, 'tt'))]")
 
+		var sem = make(chan int)
+		var keys []int
 		var locations = make(map[int]int)
 		for i := 0; i < len(score_button); i++ {
-			var location *selenium.Point
-			location, _ = score_button[i].Location()
-			locations[location.Y] = i
+			go func(i int) {
+				var location *selenium.Point
+				location, _ = score_button[i].Location()
+				locations[location.Y] = i
+				keys = append(keys, location.Y)
+				sem <- 0
+			}(i)
+		}
+		for range score_button {
+			<-sem
 		}
 
-		start = time.Now()
-		var keys = make([]int, 0, len(locations))
-		for k := range locations {
-			keys = append(keys, k)
-		}
 		sort.Sort(sort.Reverse(sort.IntSlice(keys)))
 
 		for _, k := range keys {
@@ -58,6 +62,8 @@ func main() {
 			is_enabled, _ := btn.IsEnabled()
 			if is_enabled {
 				btn.Click()
+			} else {
+				break
 			}
 		}
 	}
