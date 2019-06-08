@@ -18,7 +18,7 @@ while True:
             if (score_button[i].is_enabled() and score_button[i].is_displayed()):
                 score_button[i].click()
             else:
-                continue
+                break
             #webdriver.ActionChains(driver).move_to_element(score_button[max_index]).click().perform()
     except Exception as e:
         print (e)
