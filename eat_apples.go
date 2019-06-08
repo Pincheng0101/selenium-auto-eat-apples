@@ -18,7 +18,6 @@ func main() {
 	service, err := selenium.NewChromeDriverService("chromedriver", port, opts...)
 	if err != nil {
 		panic(err)
-
 	}
 	defer service.Stop()
 
@@ -26,7 +25,6 @@ func main() {
 	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://127.0.0.1:%d/wd/hub", port))
 	if err != nil {
 		panic(err)
-
 	}
 	defer wd.Quit()
 
